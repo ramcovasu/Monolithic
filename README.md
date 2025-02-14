@@ -11,6 +11,7 @@ A powerful tool for analyzing, documenting, and visualizing SQL codebase structu
 - **Interactive Documentation**: Generates comprehensive HTML documentation with interactive components
 - **Streamlit Interface**: User-friendly web interface for uploading and analyzing SQL files
 - **Monolithic helps to generate a SQL file which can then be used for this project
+- **Output is created as a HTML , sample shown sql_documentation.html
 
 ## Architecture
 
