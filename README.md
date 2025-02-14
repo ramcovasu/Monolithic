@@ -10,6 +10,7 @@ A powerful tool for analyzing, documenting, and visualizing SQL codebase structu
 - **LLM-Powered Analysis**: Leverages language models to provide detailed code analysis and insights
 - **Interactive Documentation**: Generates comprehensive HTML documentation with interactive components
 - **Streamlit Interface**: User-friendly web interface for uploading and analyzing SQL files
+- **Monolithic helps to generate a SQL file which can then be used for this project
 
 ## Architecture
 
