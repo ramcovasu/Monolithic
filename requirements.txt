@@ -1,0 +1,32 @@
+# Core dependencies
+streamlit>=1.24.0
+torch>=2.0.0
+transformers>=4.30.0
+sentence-transformers>=2.2.2
+
+# SQL Processing
+sqlparse>=0.4.3
+
+# Vector Store
+chromadb>=0.4.0
+
+# Visualization
+graphviz>=0.20.1
+plotly>=5.13.0
+networkx>=3.1
+
+# Documentation
+markdown>=3.4.3
+
+# Progress bars
+tqdm>=4.65.0
+
+# Data handling
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Type hints
+typing-extensions>=4.5.0
+
+# Utilities
+python-dotenv>=1.0.0
