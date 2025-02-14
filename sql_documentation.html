@@ -1,0 +1,1456 @@
+
+        <html>
+        <head>
+            <title>SQL Code Documentation</title>
+            <style>
+                body { 
+                    font-family: Arial, sans-serif; 
+                    margin: 40px;
+                    line-height: 1.6;
+                    color: #333;
+                    background-color: #fff;
+                }
+                .section { 
+                    margin-bottom: 30px;
+                    background: #fff;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+                .object-card { 
+                    border: 1px solid #e1e4e8;
+                    padding: 20px;
+                    margin: 15px 0;
+                    border-radius: 6px;
+                    background: #f8f9fa;
+                }
+                .metadata { 
+                    color: #666;
+                    font-size: 0.9em;
+                    margin: 10px 0;
+                    padding: 10px;
+                    background: #f1f1f1;
+                    border-radius: 4px;
+                }
+                .summary { margin: 15px 0; }
+                .summary h3 { color: #0366d6; }
+                .lineage { 
+                    margin-top: 15px;
+                    padding-top: 15px;
+                    border-top: 1px solid #e1e4e8;
+                }
+                h1, h2 { 
+                    color: #24292e;
+                    border-bottom: 2px solid #e1e4e8;
+                    padding-bottom: 0.3em;
+                }
+                h3, h4 { color: #24292e; }
+                pre {
+                    background: #f6f8fa;
+                    padding: 16px;
+                    border-radius: 6px;
+                    overflow-x: auto;
+                }
+                .toc {
+                    background: #f8f9fa;
+                    padding: 20px;
+                    border-radius: 6px;
+                    margin: 20px 0;
+                }
+                .toc ul { padding-left: 20px; }
+                .toc li { margin: 5px 0; }
+            </style>
+        </head>
+        <body>
+        
+
+        <div class="section">
+            <h1>SQL Code Documentation</h1>
+            <h2>Overview</h2>
+            <div class="summary">
+                <h3>Comprehensive Overview of the SQL Codebase</h3>
+<h4>1. Overall Architecture and Design Patterns</h4>
+<p>The SQL codebase consists of several packages, each dedicated to specific business logic operations:</p>
+<p>- **Modular Design**: The architecture follows a modular approach where each package handles distinct functionalities such as customer management, order processing, inventory adjustments, payment handling, and reporting.</p>
+<p>- **Procedure-Centric Design**: Each package contains multiple procedures that encapsulate business logic. This design pattern promotes reusability and maintainability by isolating specific tasks into self-contained units.</p>
+<p>- **Package Organization**: The packages are organized based on their domain of responsibility:</p>
+<p>  - `CUSTOMER_MGMT`: Manages customer-related operations.</p>
+<p>  - `ORDER_MGMT`: Handles order creation and status updates.</p>
+<p>  - `INVENTORY_MGMT` & `PAYMENT_MGMT`: Deal with inventory adjustments and report generation, although there is an overlap in functionality between these packages.</p>
+<p>  - `REPORTING_MGMT`: Focuses on generating reports related to inventory.</p>
+<h4>2. Key Business Processes</h4>
+<p>- **Customer Management**: Procedures like `update_customer_credit_limit`, `process_customer_status_change`, and `validate_customer_account` manage customer data, including credit limits, status updates, and account validation.</p>
+<p>- **Order Processing**: The `ORDER_MGMT` package includes procedures such as `create_new_order` and `update_order_status` to handle order lifecycle management from creation to status updates.</p>
+<p>- **Inventory Management**: Procedures in the `INVENTORY_MGMT` and `PAYMENT_MGMT` packages, like `process_inventory_adjustment`, adjust inventory records based on various parameters.</p>
+<p>- **Reporting**: The `REPORTING_MGMT` package generates reports for inventory, providing insights into warehouse stock levels and other metrics.</p>
+<h4>3. Data Flow Patterns</h4>
+<p>- **Input Validation**: Many procedures incorporate input validation to ensure data integrity before processing. This is evident in procedures like `create_new_order`, `update_customer_credit_limit`, and `process_inventory_adjustment`.</p>
+<p>- **Audit Logging**: The `process_customer_status_change` procedure logs changes for audit purposes, indicating a pattern of maintaining historical records.</p>
+<p>- **Business Logic Execution**: Each package encapsulates specific business logic, ensuring that data transformations are consistent and aligned with business rules.</p>
+<h4>4. Notable Features and Complexities</h4>
+<p>- **Cross-Package Overlap**: There is an overlap in functionality between the `INVENTORY_MGMT` and `PAYMENT_MGMT` packages regarding inventory adjustments, which may lead to redundancy or require careful management to avoid conflicts.</p>
+<p>- **Audit and Validation**: The inclusion of audit trails and validation steps adds complexity but enhances reliability and traceability within the system.</p>
+<p>- **Parameterized Procedures**: Procedures are designed to accept various parameters (e.g., customer ID, order details), allowing for flexible and dynamic execution based on input data.</p>
+<h4>5. Potential Areas of Interest</h4>
+<p>- **Refactoring for Redundancy**: Investigate the overlap between `INVENTORY_MGMT` and `PAYMENT_MGMT` packages to streamline functionality and reduce redundancy.</p>
+<p>- **Enhanced Logging Mechanisms**: Explore opportunities to enhance audit logging across all packages for better traceability and compliance.</p>
+<p>- **Performance Optimization**: Analyze the performance of procedures, especially those involving complex validations or large data manipulations, to identify potential bottlenecks.</p>
+<p>- **Scalability Considerations**: Evaluate how well the current architecture supports scalability, particularly in handling increased transaction volumes or expanding business requirements.</p>
+<p>This overview highlights the structured approach of the SQL codebase, emphasizing modular design, clear separation of concerns, and robust validation mechanisms. Future improvements could focus on reducing redundancy and enhancing performance and scalability.</p>
+            </div>
+        </div>
+        
+<div class="section toc"><h2>Table of Contents</h2><ul>
+<li><a href="#package">PACKAGEs</a></li>
+<li><a href="#procedure">PROCEDUREs</a></li>
+</ul></div>
+
+            <div class="section" id="package">
+                <h2>PACKAGEs</h2>
+            
+
+                <div class="object-card">
+                    <h3>CUSTOMER_MGMT</h3>
+                    <div class="metadata">
+                        <p><strong>Lines:</strong> 1 - 347</p>
+                        <p><strong>Dependencies:</strong> ["table1", "v_count", "v_status", "audit_log", "some_table", "error_log", "records", "table2"]</p>
+                    </div>
+                    <div class="summary">
+                        <h4>Summary</h4>
+                        <h1>Package Overview</h1>
+<p>The `CUSTOMER_MGMT` package is designed to handle business logic related to customer management operations. Its main responsibilities include updating customer credit limits, processing changes in customer status, and validating customer accounts.</p>
+<h2>Architecture and Design</h2>
+<li>**Modular Structure**</li>
+<p>  - The package is divided into a specification (`SPEC`) that declares public procedures and types, and a body (`BODY`) that implements these declarations.</p>
+<li>**Design Patterns**</li>
+<p>  - Uses stored procedures to encapsulate business logic for reusability and maintainability.</p>
+<li>**Code Organization**</li>
+<p>  - Separation of interface (specification) and implementation (body).</p>
+<p>  - Consistent naming conventions for similar operations.</p>
+<h2>Key Components</h2>
+<h3>Package Specification</h3>
+<p>- Public Procedures:</p>
+<p>  - `update_customer_credit_limit`</p>
+<p>  - `process_customer_status_change`</p>
+<p>  - `validate_customer_account`</p>
+<li>No explicitly declared public functions, types, or constants are present in the specification.</li>
+<h3>Package Body</h3>
+<p>- **Implementation Details**</p>
+<p>  - Each procedure has specific logic for updating credit limits, changing statuses, and validating accounts.</p>
+<p>- **Error Handling Approach**</p>
+<p>  - Uses PL/SQL exception handling with `RAISE_APPLICATION_ERROR` to handle input validation errors.</p>
+<p>  - General error logging is implemented in a catch-all exception block.</p>
+<p>- **Validation Strategy**</p>
+<p>  - Checks for null inputs and existence of records before proceeding with business logic.</p>
+<h2>Business Logic</h2>
+<li>**Main Operations**</li>
+<p>  - Updates customer credit limits.</p>
+<p>  - Processes changes in customer status based on specified reason codes.</p>
+<p>  - Validates customer accounts against given criteria.</p>
+<li>**Data Flow**</li>
+<p>  - Procedures perform validations, execute updates or modifications on relevant tables, and log transaction details.</p>
+<li>**Integration Points**</li>
+<p>  - The package interacts with multiple management modules such as `REPORTING_MGMT`, `ORDER_MGMT`, `INVENTORY_MGMT`, and `PAYMENT_MGMT`.</p>
+<h2>Technical Analysis</h2>
+<h3>Dependencies</h3>
+<code><pre class="code-block">
+{
+  "object": "records",
+  "incoming_dependencies": [
+    "REPORTING_MGMT",
+    "update_customer_credit_limit",
+    "process_customer_status_change",
+    "ORDER_MGMT",
+    "CUSTOMER_MGMT",
+    "update_order_status",
+    "create_new_order",
+    "INVENTORY_MGMT",
+    "validate_customer_account",
+    "generate_inventory_report",
+    "process_inventory_adjustment",
+    "PAYMENT_MGMT"
+  ],
+  "outgoing_dependencies": []
+}
+</pre></code>
+<h3>Error Handling Strategy</h3>
+<p>- Uses RAISE_APPLICATION_ERROR for specific known errors (e.g., null input, record not found).</p>
+<p>- Logs general exceptions to an error_log table and raises them further.</p>
+<h3>Performance Considerations</h3>
+<p>- Procedures include database operations such as `SELECT`, `UPDATE`, and transaction logging which can impact performance.</p>
+<p>- The code commits transactions after completing critical sections, ensuring data consistency but potentially increasing transaction overhead.</p>
+<p>---</p>
+<h1>Code Analysis</h1>
+<p>The provided SQL package includes redundant declarations in the specification. Each procedure is declared multiple times with identical parameters, indicating potential copy-paste errors during development or version control issues. In practice, each public procedure should be declared only once within the `PACKAGE CUSTOMER_MGMT AS` section.</p>
+<p>**Example of Redundant Declarations:**</p>
+<code><pre class="code-block">
+CREATE OR REPLACE PACKAGE CUSTOMER_MGMT AS
+    PROCEDURE update_customer_credit_limit(p_customer_id IN NUMBER, p_new_credit_limit IN NUMBER);
+    -- The same procedure is repeated multiple times
+    ...
+END CUSTOMER_MGMT;
+</pre></code>
+<p>In the package body, there are placeholders like `some_param`, which should be replaced with actual parameter names such as `p_customer_id`. The logic for each operation within the procedures appears to follow a similar pattern: validation of parameters, data existence checks, business rule application, and error handling.</p>
+<p>**Example Procedure Body Structure:**</p>
+<code><pre class="code-block">
+CREATE OR REPLACE PROCEDURE update_customer_credit_limit (
+    p_customer_id IN NUMBER, p_new_credit_limit IN NUMBER
+) AS
+BEGIN
+    -- Input validation
+    IF some_param IS NULL THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Parameter cannot be null');
+    END IF;
+
+    -- Data existence check
+    SELECT COUNT(*) INTO v_count FROM some_table WHERE id = some_param;
+    IF v_count = 0 THEN
+        RAISE_APPLICATION_ERROR(-20002, 'Record not found');
+    END IF;
+
+    -- Business logic (e.g., update credit limit)
+    ...
+
+    COMMIT;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        ROLLBACK;
+        RAISE_APPLICATION_ERROR(-20101, 'No data found for ID: ' || some_param);
+    WHEN OTHERS THEN
+        ROLLBACK;
+        -- Log error and re-raise exception
+        ...
+END;
+</pre></code>
+<p>To improve maintainability, consider consolidating the repeated logic in a utility function or procedure if applicable. Ensure all parameter names are consistent across declarations and implementations. Additionally, optimize transaction management to balance between data integrity and performance.</p>
+                    </div>
+                    <div class="lineage">
+                        <h4>Lineage Analysis</h4>
+                        <p>{</p>
+<p>  "object": "records",</p>
+<p>  "incoming_dependencies": [</p>
+<p>    "REPORTING_MGMT",</p>
+<p>    "update_customer_credit_limit",</p>
+<p>    "process_customer_status_change",</p>
+<p>    "ORDER_MGMT",</p>
+<p>    "CUSTOMER_MGMT",</p>
+<p>    "update_order_status",</p>
+<p>    "create_new_order",</p>
+<p>    "INVENTORY_MGMT",</p>
+<p>    "validate_customer_account",</p>
+<p>    "generate_inventory_report",</p>
+<p>    "process_inventory_adjustment",</p>
+<p>    "PAYMENT_MGMT"</p>
+<p>  ],</p>
+<p>  "outgoing_dependencies": []</p>
+<p>}</p>
+                    </div>
+                </div>
+                
+
+                <div class="object-card">
+                    <h3>ORDER_MGMT</h3>
+                    <div class="metadata">
+                        <p><strong>Lines:</strong> 347 - 582</p>
+                        <p><strong>Dependencies:</strong> ["table1", "v_count", "v_status", "audit_log", "some_table", "error_log", "records", "table2"]</p>
+                    </div>
+                    <div class="summary">
+                        <h4>Summary</h4>
+                        <h1>Package Overview</h1>
+<p>The `ORDER_MGMT` package is designed to handle the business logic associated with order management. It includes procedures for creating new orders and updating existing order statuses, ensuring data validation, consistency, and integrity throughout its operations.</p>
+<h2>Architecture and Design</h2>
+<p>- **Modular Structure**: The package is organized into a specification (`PACKAGE`) and body (`PACKAGE BODY`), encapsulating related functionalities.</p>
+<p>- **Design Patterns**: Employs basic error handling patterns using exceptions.</p>
+<p>- **Code Organization**: Procedures are grouped together under the same logical purpose, with separation of concerns for input validation, business logic application, and error logging.</p>
+<h2>Key Components</h2>
+<h3>Package Specification</h3>
+<p>- **Public Procedures**:</p>
+<p>  - `create_new_order(p_customer_id IN NUMBER, p_order_type IN VARCHAR2, p_total_amount IN NUMBER)`</p>
+<p>  - `update_order_status(p_order_id IN NUMBER, p_new_status IN VARCHAR2, p_update_reason IN VARCHAR2)`</p>
+<h3>Package Body</h3>
+<p>- **Implementation Details**:</p>
+<p>  - The procedures include input validation checks and business rules application. Each procedure interacts with multiple tables to perform its operations.</p>
+<p>- **Error Handling Approach**:</p>
+<p>  ```sql</p>
+<p>  WHEN NO_DATA_FOUND THEN</p>
+<p>      ROLLBACK;</p>
+<p>      v_error_message := 'No data found for ID: ' || some_param;</p>
+<p>      RAISE_APPLICATION_ERROR(-20101, v_error_message);</p>
+<p>  WHEN OTHERS THEN</p>
+<p>      ROLLBACK;</p>
+<p>      v_error_code := SQLCODE;</p>
+<p>      v_error_message := SQLERRM;</p>
+<p>      -- Log error</p>
+<p>      INSERT INTO error_log (</p>
+<p>          error_code,</p>
+<p>          error_message,</p>
+<p>          created_date</p>
+<p>      ) VALUES (</p>
+<p>          v_error_code,</p>
+<p>          v_error_message,</p>
+<p>          v_current_date</p>
+<p>      );</p>
+<p>      COMMIT;</p>
+<p>      RAISE;</p>
+<p>  ```</p>
+<p>- **Validation Strategy**:</p>
+<p>  - Checks for null parameters and existence of records in relevant tables before proceeding with business logic.</p>
+<h2>Business Logic</h2>
+<p>- **Main Operations**:</p>
+<p>  - Creating new orders.</p>
+<p>  - Updating the status of existing orders.</p>
+<p>- **Data Flow**:</p>
+<p>  - Input validation, data retrieval, application of business rules, updating records, and logging audit trails are part of the core operations in both procedures.</p>
+<p>- **Integration Points**:</p>
+<p>  - Interacts with `table1`, `some_table`, `audit_log`, and `error_log` for reading, writing, and logging purposes.</p>
+<h2>Technical Analysis</h2>
+<h3>Dependencies</h3>
+<code><pre class="code-block">
+{
+  "object": "ORDER_MGMT",
+  "incoming_dependencies": [],
+  "outgoing_dependencies": [
+    "table1",
+    "error_log",
+    "some_table",
+    "audit_log",
+    "records",
+    "table2",
+    "v_status",
+    "v_count"
+  ]
+}
+</pre></code>
+<h3>Error Handling Strategy</h3>
+<p>- Utilizes PL/SQL exceptions for error detection and handling, including custom exception raising with `RAISE_APPLICATION_ERROR` to signal validation failures.</p>
+<p>- Includes rollback mechanisms in case of errors during database operations.</p>
+<h3>Performance Considerations</h3>
+<p>- Efficient use of SQL queries with necessary validations ensures minimal performance overhead.</p>
+<p>- Proper exception management and logging ensure the package's robustness without significant impact on performance.</p>
+<p>Overall, the `ORDER_MGMT` package provides a structured approach to managing order-related operations within an organization, ensuring data integrity and systematic error handling.</p>
+                    </div>
+                    <div class="lineage">
+                        <h4>Lineage Analysis</h4>
+                        <p>{</p>
+<p>  "object": "ORDER_MGMT",</p>
+<p>  "incoming_dependencies": [],</p>
+<p>  "outgoing_dependencies": [</p>
+<p>    "table1",</p>
+<p>    "error_log",</p>
+<p>    "some_table",</p>
+<p>    "audit_log",</p>
+<p>    "records",</p>
+<p>    "table2",</p>
+<p>    "v_status",</p>
+<p>    "v_count"</p>
+<p>  ]</p>
+<p>}</p>
+                    </div>
+                </div>
+                
+
+                <div class="object-card">
+                    <h3>INVENTORY_MGMT</h3>
+                    <div class="metadata">
+                        <p><strong>Lines:</strong> 582 - 817</p>
+                        <p><strong>Dependencies:</strong> ["table1", "v_count", "v_status", "audit_log", "some_table", "error_log", "records", "table2"]</p>
+                    </div>
+                    <div class="summary">
+                        <h4>Summary</h4>
+                        <h1>Package Overview</h1>
+<p>The `INVENTORY_MGMT` package is designed to handle the business logic related to inventory management operations. Its primary responsibilities include processing inventory adjustments and generating inventory reports. These tasks involve interacting with various tables to validate input parameters, update records, and maintain audit logs for tracking changes.</p>
+<h2>Architecture and Design</h2>
+<li>**Modular Structure**: The package uses a clear separation between its specification and body, defining public interfaces and private implementation details.</li>
+<li>**Design Patterns**: It follows standard procedural design patterns used in SQL PL with structured error handling and validation strategies.</li>
+<li>**Code Organization**: The code is organized into two main components: the specification (interface) and the body (implementation), which aids in understanding and maintaining the package.</li>
+<h2>Key Components</h2>
+<h3>Package Specification</h3>
+<p>- **Public Procedures**:</p>
+<p>  - `process_inventory_adjustment`: Adjusts inventory levels based on product ID, quantity change, and reason.</p>
+<p>  - `generate_inventory_report`: Generates reports for a given warehouse ID and report type.</p>
+<p>- **Types and Constants**: Not explicitly defined in the provided code.</p>
+<h3>Package Body</h3>
+<p>- **Implementation Details**:</p>
+<p>  - The procedures are implemented with input validation, business logic processing, and database updates.</p>
+<p>- **Error Handling Approach**:</p>
+<p>  - Uses `RAISE_APPLICATION_ERROR` for parameter validation errors.</p>
+<p>  - Handles exceptions like `NO_DATA_FOUND` and generic errors using PL/SQL exception blocks to log them in an error table.</p>
+<p>- **Validation Strategy**:</p>
+<p>  - Checks for null parameters and verifies data existence before proceeding with operations.</p>
+<h2>Business Logic</h2>
+<li>**Main Operations**:</li>
+<p>  - Adjusting inventory levels through the `process_inventory_adjustment` procedure.</p>
+<p>  - Generating reports via the `generate_inventory_report` procedure.</p>
+<li>**Data Flow**:</li>
+<p>  - Involves reading from and writing to various tables based on business rules.</p>
+<p>- **Integration Points**:</p>
+<p>  - The package interacts with other management packages such as `CUSTOMER_MGMT`, `ORDER_MGMT`, and `PAYMENT_MGMT`.</p>
+<h2>Technical Analysis</h2>
+<h3>Dependencies</h3>
+<code><pre class="code-block">
+{
+  "object": "v_count",
+  "incoming_dependencies": [
+    "CUSTOMER_MGMT",
+    "update_order_status",
+    "create_new_order",
+    "INVENTORY_MGMT",
+    "process_inventory_adjustment",
+    "PAYMENT_MGMT",
+    "validate_customer_account",
+    "generate_inventory_report",
+    "REPORTING_MGMT",
+    "update_customer_credit_limit",
+    "process_customer_status_change",
+    "ORDER_MGMT"
+  ],
+  "outgoing_dependencies": []
+}
+</pre></code>
+<p>- The package has several incoming dependencies but no outgoing ones, indicating its role as a service provider for other components.</p>
+<h3>Error Handling Strategy</h3>
+<p>- The error handling involves capturing specific exceptions (`NO_DATA_FOUND`, generic errors) and logging them in an `error_log` table. This ensures that issues are documented and can be addressed systematically.</p>
+<h3>Performance Considerations</h3>
+<p>- Ensuring efficient database interactions through appropriate use of indexes on frequently queried columns.</p>
+<p>- Minimizing the number of SQL statements within loops to reduce execution time.</p>
+<p>- Using transactions judiciously to maintain data integrity without causing performance bottlenecks.</p>
+<p>Overall, `INVENTORY_MGMT` is a robust package for managing inventory operations with clear interfaces and detailed implementation logic.</p>
+                    </div>
+                    <div class="lineage">
+                        <h4>Lineage Analysis</h4>
+                        <p>{</p>
+<p>  "object": "v_count",</p>
+<p>  "incoming_dependencies": [</p>
+<p>    "CUSTOMER_MGMT",</p>
+<p>    "update_order_status",</p>
+<p>    "create_new_order",</p>
+<p>    "INVENTORY_MGMT",</p>
+<p>    "process_inventory_adjustment",</p>
+<p>    "PAYMENT_MGMT",</p>
+<p>    "validate_customer_account",</p>
+<p>    "generate_inventory_report",</p>
+<p>    "REPORTING_MGMT",</p>
+<p>    "update_customer_credit_limit",</p>
+<p>    "process_customer_status_change",</p>
+<p>    "ORDER_MGMT"</p>
+<p>  ],</p>
+<p>  "outgoing_dependencies": []</p>
+<p>}</p>
+                    </div>
+                </div>
+                
+
+                <div class="object-card">
+                    <h3>PAYMENT_MGMT</h3>
+                    <div class="metadata">
+                        <p><strong>Lines:</strong> 817 - 1052</p>
+                        <p><strong>Dependencies:</strong> ["table1", "v_count", "v_status", "audit_log", "some_table", "error_log", "records", "table2"]</p>
+                    </div>
+                    <div class="summary">
+                        <h4>Summary</h4>
+                        <h1>Package Overview</h1>
+<h2>Introduction</h2>
+<p>The `PAYMENT_MGMT` package is designed to manage business logic associated with inventory adjustments and report generation. Its primary responsibilities include processing inventory changes, generating reports based on specific criteria, and ensuring data integrity through validation and error handling.</p>
+<h2>Architecture and Design</h2>
+<li>**Modular Structure**: The package consists of a specification (`PACKAGE`) defining the public interface (procedures) and a body (`PACKAGE BODY`) containing their implementations.</li>
+<li>**Design Patterns**:</li>
+<ul class="nested-list">
+<li>*Transaction Management*: Utilizes `COMMIT` and `ROLLBACK` for managing database transactions effectively.</li>
+<li>*Error Handling*: Employs `EXCEPTION` blocks to manage errors, log them in an error table, and ensure transactional consistency.</li>
+</ul>
+<li>**Code Organization**: Procedures are organized by their function—inventory adjustment processing and report generation.</li>
+<h2>Key Components</h2>
+<h3>Package Specification</h3>
+<li>**Public Procedures**:</li>
+<p>  - `process_inventory_adjustment`: Adjusts inventory levels based on given parameters.</p>
+<p>  - `generate_inventory_report`: Generates reports for specified warehouse criteria.</p>
+<li>**Types and Constants**: Not explicitly defined in the provided code. These might be added to enhance functionality or readability.</li>
+<h3>Package Body</h3>
+<li>**Implementation Details**:</li>
+<ul class="nested-list">
+<li>Both procedures share a similar structure, including input validation, data manipulation, and audit logging.</li>
+</ul>
+<li>**Error Handling Approach**:</li>
+<ul class="nested-list">
+<li>Uses `RAISE_APPLICATION_ERROR` for controlled exception throwing with custom error codes and messages.</li>
+<li>Captures and logs errors in an `error_log` table for traceability.</li>
+</ul>
+<li>**Validation Strategy**:</li>
+<ul class="nested-list">
+<li>Checks for null parameters and verifies the existence of records before proceeding with business logic.</li>
+<h2>Business Logic</h2>
+</ul>
+<li>**Main Operations**:</li>
+<p>  - Inventory adjustments: Update inventory levels based on inputs and current status.</p>
+<p>  - Report generation: Produce reports based on warehouse ID and report type, though implementation details are minimal in the provided code.</p>
+<li>**Data Flow**:</li>
+<ul class="nested-list">
+<li>Inputs are validated against existing records.</li>
+<li>Business logic is applied if validation succeeds, including updates to tables and insertion of audit logs.</li>
+</ul>
+<li>**Integration Points**:</li>
+<p>  - Interacts with `table1`, `table2`, `audit_log`, and `error_log` for data manipulation and logging purposes.</p>
+<h2>Technical Analysis</h2>
+<h3>Dependencies</h3>
+<code><pre class="code-block">
+{
+  "object": "PAYMENT_MGMT",
+  "incoming_dependencies": [],
+  "outgoing_dependencies": [
+    "v_status",
+    "some_table",
+    "v_count",
+    "table1",
+    "error_log",
+    "audit_log",
+    "records",
+    "table2"
+  ]
+}
+</pre></code>
+<li>Outgoing dependencies include variables, tables, and logs that the package interacts with.</li>
+<h3>Error Handling Strategy</h3>
+<p>- Utilizes `RAISE_APPLICATION_ERROR` for specific error codes.</p>
+<p>- Captures unexpected exceptions using an `EXCEPTION` block to log details in the `error_log`.</p>
+<h3>Performance Considerations</h3>
+<li>The repeated invocation of similar validation and update logic could be optimized by abstracting common functionalities into helper procedures or functions.</li>
+<li>Ensure that database queries (SELECT, UPDATE) are efficient and indexed appropriately for better performance.</li>
+<code><pre class="code-block">
+CREATE OR REPLACE PROCEDURE process_inventory_adjustment (
+    p_product_id IN NUMBER, p_quantity_change IN NUMBER, p_reason_code IN VARCHAR2
+) AS
+BEGIN
+    -- Business logic implementation here
+END;
+</pre></code>
+<p>Overall, `PAYMENT_MGMT` demonstrates a structured approach to handling inventory-related operations with robust error management and transaction control. However, there is potential for further optimization and enhancement in areas such as code reuse and performance tuning.</p>
+                    </div>
+                    <div class="lineage">
+                        <h4>Lineage Analysis</h4>
+                        <p>{</p>
+<p>  "object": "PAYMENT_MGMT",</p>
+<p>  "incoming_dependencies": [],</p>
+<p>  "outgoing_dependencies": [</p>
+<p>    "v_status",</p>
+<p>    "some_table",</p>
+<p>    "v_count",</p>
+<p>    "table1",</p>
+<p>    "error_log",</p>
+<p>    "audit_log",</p>
+<p>    "records",</p>
+<p>    "table2"</p>
+<p>  ]</p>
+<p>}</p>
+                    </div>
+                </div>
+                
+
+                <div class="object-card">
+                    <h3>REPORTING_MGMT</h3>
+                    <div class="metadata">
+                        <p><strong>Lines:</strong> 1052 - 1286</p>
+                        <p><strong>Dependencies:</strong> ["table1", "v_count", "v_status", "audit_log", "some_table", "error_log", "records", "table2"]</p>
+                    </div>
+                    <div class="summary">
+                        <h4>Summary</h4>
+                        <h1>Package Overview</h1>
+<p>The `REPORTING_MGMT` package is designed to manage business operations related to inventory adjustments and generating reports. It provides procedures for processing inventory changes and creating inventory reports, ensuring proper data handling, validation, error management, and logging.</p>
+<h2>Architecture and Design</h2>
+<li>**Modular Structure**: The package follows a modular approach with separate specifications for defining public interfaces and bodies for implementation.</li>
+<li>**Design Patterns**: Basic design patterns like exception handling and modular programming are utilized.</li>
+<li>**Code Organization**: Public procedures are declared in the specification, while their implementations reside in the body.</li>
+<h2>Key Components</h2>
+<li>**Package Specification**</li>
+<p>  - *Public Procedures*</p>
+<p>    ```sql</p>
+<p>    PROCEDURE process_inventory_adjustment(p_product_id IN NUMBER, p_quantity_change IN NUMBER, p_reason_code IN VARCHAR2);</p>
+<p>    PROCEDURE generate_inventory_report(p_warehouse_id IN NUMBER, p_report_type IN VARCHAR2);</p>
+<p>    ```</p>
+<p>  - *Types and Constants*: Not explicitly defined in the provided code.</p>
+<li>**Package Body**</li>
+<p>  - *Implementation Details*</p>
+<p>    ```sql</p>
+<p>    CREATE OR REPLACE PROCEDURE process_inventory_adjustment (</p>
+<p>        p_product_id IN NUMBER, p_quantity_change IN NUMBER, p_reason_code IN VARCHAR2</p>
+<p>    ) AS</p>
+<p>    ```</p>
+<p>  - *Error Handling Approach*: Uses `RAISE_APPLICATION_ERROR` for parameter validation and standard exception handling mechanisms for other errors.</p>
+<p>  - *Validation Strategy*: Checks for null values and existence of records before proceeding with business logic.</p>
+<h2>Business Logic</h2>
+<li>**Main Operations**</li>
+<p>  - Inventory adjustment processing (`process_inventory_adjustment`)</p>
+<p>  - Generation of inventory reports (`generate_inventory_report`)</p>
+<li>**Data Flow**:</li>
+<p>  - Involves querying tables like `table1` and `table2`, updating records, and inserting audit logs.</p>
+<li>**Integration Points**:</li>
+<p>  - Interacts with various database objects including tables (`some_table`, `table1`, `table2`) and views (`v_status`, `v_count`), as well as logging mechanisms (`audit_log`, `error_log`).</p>
+<h2>Technical Analysis</h2>
+<li>**Dependencies**</li>
+<p>  ```json</p>
+<p>  {</p>
+<p>    "object": "REPORTING_MGMT",</p>
+<p>    "incoming_dependencies": [],</p>
+<p>    "outgoing_dependencies": [</p>
+<p>      "audit_log",</p>
+<p>      "records",</p>
+<p>      "table2",</p>
+<p>      "v_status",</p>
+<p>      "v_count",</p>
+<p>      "table1",</p>
+<p>      "error_log",</p>
+<p>      "some_table"</p>
+<p>    ]</p>
+<p>  }</p>
+<p>  ```</p>
+<li>**Error Handling Strategy**</li>
+<p>  - Custom error messages for validation failures.</p>
+<p>  - Rollback and logging on exceptions, followed by re-raising the exception to ensure visibility of issues.</p>
+<li>**Performance Considerations**</li>
+<p>  - Ensures minimal transactions are committed only upon successful operations.</p>
+<p>  - Utilizes indexes effectively via specific WHERE clauses in SQL statements to improve query performance.</p>
+<h3>Additional Observations</h3>
+<p>- The code exhibits redundancy with repeated declarations of procedures within the package specification. This could be cleaned up by removing duplicates for clarity and maintainability.</p>
+<p>- The use of placeholders like `some_param` suggests incomplete or generic examples, which should be replaced with actual parameter names for clarity in real-world usage.</p>
+<p>This analysis highlights key aspects of the `REPORTING_MGMT` SQL package while noting areas for potential improvement in terms of code redundancy and placeholder usage.</p>
+                    </div>
+                    <div class="lineage">
+                        <h4>Lineage Analysis</h4>
+                        <p>{</p>
+<p>  "object": "REPORTING_MGMT",</p>
+<p>  "incoming_dependencies": [],</p>
+<p>  "outgoing_dependencies": [</p>
+<p>    "audit_log",</p>
+<p>    "records",</p>
+<p>    "table2",</p>
+<p>    "v_status",</p>
+<p>    "v_count",</p>
+<p>    "table1",</p>
+<p>    "error_log",</p>
+<p>    "some_table"</p>
+<p>  ]</p>
+<p>}</p>
+                    </div>
+                </div>
+                
+</div>
+
+            <div class="section" id="procedure">
+                <h2>PROCEDUREs</h2>
+            
+
+                <div class="object-card">
+                    <h3>update_customer_credit_limit</h3>
+                    <div class="metadata">
+                        <p><strong>Lines:</strong> 71 - 162</p>
+                        <p><strong>Dependencies:</strong> ["table1", "v_count", "v_status", "audit_log", "some_table", "error_log", "records", "table2"]</p>
+                    </div>
+                    <div class="summary">
+                        <h4>Summary</h4>
+                        <h3>PROCEDURE Overview</h3>
+<p>The `update_customer_credit_limit` procedure is designed to update the credit limit for a specified customer in the database. It incorporates validation, business logic execution, and logging mechanisms to ensure data integrity and maintain an audit trail.</p>
+<h3>Parameters</h3>
+<p>- **p_customer_id (IN NUMBER):** The unique identifier of the customer whose credit limit is being updated.</p>
+<p>- **p_new_credit_limit (IN NUMBER):** The new credit limit value that should be applied to the specified customer.</p>
+<h3>Business Logic</h3>
+<p>- **Main Operations:**</p>
+<p>  - Validates input parameters and checks for existence in relevant tables.</p>
+<p>  - Retrieves current status and category of a record from `table1` and `table2`.</p>
+<p>  - Applies business rules based on the status of the customer (e.g., adjusting amounts if the status is 'PENDING').</p>
+<p>  - Updates the credit limit value in `table1`.</p>
+<p>  - Inserts an audit log entry upon successful completion of the operation.</p>
+<p>- **Validation Rules:**</p>
+<p>  - Ensures that input parameters are not null.</p>
+<p>  - Verifies the existence of a record corresponding to the provided ID (`some_param`) in `some_table`.</p>
+<p>- **Error Handling:**</p>
+<p>  - Utilizes `RAISE_APPLICATION_ERROR` for custom errors when validations fail (e.g., parameter is null, or record not found).</p>
+<p>  - Catches exceptions such as `NO_DATA_FOUND`, rolls back transactions, and logs appropriate error messages.</p>
+<p>  - Handles any other unforeseen errors using a generic exception handler that logs the error code and message before re-raising the error.</p>
+<h3>Technical Implementation</h3>
+<p>- **Database Operations:**</p>
+<p>  - Performs `SELECT` queries to validate data existence and fetch current status.</p>
+<p>  - Executes an `UPDATE` operation on `table1` to modify the credit limit and related attributes.</p>
+<p>  - Inserts a record into `audit_log` for tracking purposes after successful updates.</p>
+<p>- **Dependencies:**</p>
+<p>  ```json</p>
+<p>  {</p>
+<p>      "object": "update_customer_credit_limit",</p>
+<p>      "incoming_dependencies": [],</p>
+<p>      "outgoing_dependencies": [</p>
+<p>          "audit_log",</p>
+<p>          "records",</p>
+<p>          "table2",</p>
+<p>          "v_status",</p>
+<p>          "some_table",</p>
+<p>          "v_count",</p>
+<p>          "error_log",</p>
+<p>          "table1"</p>
+<p>      ]</p>
+<p>  }</p>
+<p>  ```</p>
+<p>- **Performance Considerations:**</p>
+<p>  - The procedure includes validation checks and conditional logic, which may impact performance if not optimized for large datasets.</p>
+<p>  - Ensuring that indexes are properly set on columns used in `WHERE` clauses can improve the efficiency of lookups and updates.</p>
+<p>  - Minimizing the scope of transactions (using appropriate commit/rollback strategies) is crucial to maintaining performance and data integrity.</p>
+                    </div>
+                    <div class="lineage">
+                        <h4>Lineage Analysis</h4>
+                        <p>{</p>
+<p>  "object": "update_customer_credit_limit",</p>
+<p>  "incoming_dependencies": [],</p>
+<p>  "outgoing_dependencies": [</p>
+<p>    "audit_log",</p>
+<p>    "records",</p>
+<p>    "table2",</p>
+<p>    "v_status",</p>
+<p>    "some_table",</p>
+<p>    "v_count",</p>
+<p>    "error_log",</p>
+<p>    "table1"</p>
+<p>  ]</p>
+<p>}</p>
+                    </div>
+                </div>
+                
+
+                <div class="object-card">
+                    <h3>process_customer_status_change</h3>
+                    <div class="metadata">
+                        <p><strong>Lines:</strong> 162 - 253</p>
+                        <p><strong>Dependencies:</strong> ["table1", "v_count", "v_status", "audit_log", "some_table", "error_log", "records", "table2"]</p>
+                    </div>
+                    <div class="summary">
+                        <h4>Summary</h4>
+                        <h3>PROCEDURE Overview</h3>
+<p>The `process_customer_status_change` procedure in the `CUSTOMER_MGMT` package is designed to update the status of a customer record and log this change in an audit trail. The process involves validating input parameters, performing business logic checks, updating relevant records if conditions are met, and ensuring all changes are recorded for auditing purposes.</p>
+<h3>Parameters</h3>
+<p>- `p_customer_id`: A numeric identifier representing the unique ID of the customer whose status is to be changed.</p>
+<p>- `p_new_status`: A string value indicating the new status that should be applied to the customer's record.</p>
+<p>- `p_reason_code`: A string code providing a reason for the status change, likely used for auditing or business rule validation.</p>
+<h3>Business Logic</h3>
+<p>- **Main Operations:**</p>
+<p>  - Validate input parameters for null values and existence in the database.</p>
+<p>  - Retrieve the current status of the customer from `table1` and additional data from `table2`.</p>
+<p>  - Apply a condition based on the current status (`PENDING`) to update financial records with new calculations.</p>
+<p>  - Log successful updates into an `audit_log`.</p>
+<p>- **Validation Rules:**</p>
+<p>  - Parameters must not be null. If any parameter is null, an error is raised.</p>
+<p>  - The customer record must exist in `some_table`. If it does not exist, an error is raised.</p>
+<p>- **Error Handling:**</p>
+<p>  - Uses the `EXCEPTION` block to handle specific errors such as `NO_DATA_FOUND`, which triggers a rollback and logs a detailed message.</p>
+<p>  - For any other unexpected errors (`OTHERS`), rolls back all changes, captures the error code and message, inserts these details into an `error_log`, commits the log entry, and then raises the exception again.</p>
+<h3>Technical Implementation</h3>
+<p>- **Database Operations:**</p>
+<p>  - Executes SQL statements to validate existence in `some_table`.</p>
+<p>  - Fetches current status from a join operation between `table1` and `table2`.</p>
+<p>  - Updates records in `table1` with new computed values when business rules are satisfied.</p>
+<p>  - Inserts an entry into the `audit_log` to record the transaction details.</p>
+<p>  - Logs errors by inserting messages into the `error_log`.</p>
+<p>- **Dependencies:**</p>
+<p>  - {</p>
+<p>    "object": "process_customer_status_change",</p>
+<p>    "incoming_dependencies": [],</p>
+<p>    "outgoing_dependencies": [</p>
+<p>      "table1",</p>
+<p>      "error_log",</p>
+<p>      "audit_log",</p>
+<p>      "records",</p>
+<p>      "table2",</p>
+<p>      "v_status",</p>
+<p>      "some_table",</p>
+<p>      "v_count"</p>
+<p>    ]</p>
+<p>  }</p>
+<p>- **Performance Considerations:**</p>
+<p>  - The procedure could potentially face performance issues if `some_table`, `table1`, or `table2` are large and not indexed appropriately, particularly on the columns involved in joins and conditions.</p>
+<p>  - Using `COMMIT` within an exception block can lead to partial commits; consideration should be given to whether this behavior aligns with business requirements.</p>
+<p>  - The procedure might benefit from reviewing indexes and query optimization techniques for large datasets.</p>
+                    </div>
+                    <div class="lineage">
+                        <h4>Lineage Analysis</h4>
+                        <p>{</p>
+<p>  "object": "process_customer_status_change",</p>
+<p>  "incoming_dependencies": [],</p>
+<p>  "outgoing_dependencies": [</p>
+<p>    "table1",</p>
+<p>    "error_log",</p>
+<p>    "audit_log",</p>
+<p>    "records",</p>
+<p>    "table2",</p>
+<p>    "v_status",</p>
+<p>    "some_table",</p>
+<p>    "v_count"</p>
+<p>  ]</p>
+<p>}</p>
+                    </div>
+                </div>
+                
+
+                <div class="object-card">
+                    <h3>validate_customer_account</h3>
+                    <div class="metadata">
+                        <p><strong>Lines:</strong> 253 - 342</p>
+                        <p><strong>Dependencies:</strong> ["table1", "v_count", "v_status", "audit_log", "some_table", "error_log", "records", "table2"]</p>
+                    </div>
+                    <div class="summary">
+                        <h4>Summary</h4>
+                        <h3>PROCEDURE Overview</h3>
+<p>The `validate_customer_account` procedure is designed to validate and update customer account information based on given inputs. It primarily checks for the validity of parameters, verifies data existence, applies business logic related to status updates, and maintains an audit log.</p>
+<h3>Parameters</h3>
+<p>- **p_customer_id (IN NUMBER):** This parameter represents the unique identifier of the customer whose account is being validated.</p>
+<p>- **p_validation_type (IN VARCHAR2):** This parameter specifies the type of validation to be performed. While its specific use isn't clear from the code, it likely influences the logic path taken within the procedure.</p>
+<h3>Business Logic</h3>
+<p>- **Main Operations:**</p>
+<p>  - Validates input parameters for null values and existence in the database.</p>
+<p>  - Checks if a record exists using `some_param` (which seems to be an undefined variable).</p>
+<p>  - Retrieves status and category information by joining `table1` and `table2`.</p>
+<p>  - If the customer's account status is 'PENDING', it calculates a new amount by increasing the current amount by 10%.</p>
+<p>  - Updates specific fields in `table1`, such as `amount` and `last_updated`.</p>
+<p>- **Validation Rules:**</p>
+<p>  - Ensures no null parameters are provided.</p>
+<p>  - Verifies that the customer record exists in `some_table`.</p>
+<p>  - Confirms that the retrieved status from `table1` is 'ACTIVE'.</p>
+<p>- **Error Handling:**</p>
+<p>  - Utilizes `RAISE_APPLICATION_ERROR` to handle specific validation failures like null parameters or missing records.</p>
+<p>  - Rolls back transactions if an exception occurs, ensuring data consistency.</p>
+<p>  - Logs errors with detailed messages and error codes in the `error_log`.</p>
+<h3>Technical Implementation</h3>
+<p>- **Database Operations:**</p>
+<p>  - Selects count of records from `some_table` for existence checks.</p>
+<p>  - Retrieves status and category from a join between `table1` and `table2`.</p>
+<p>  - Updates the `amount`, `last_updated`, and `updated_by` fields in `table1`.</p>
+<p>  - Inserts audit logs into `audit_log` after updates.</p>
+<p>  - Logs errors to `error_log` with associated error details.</p>
+<p>- **Dependencies:**</p>
+<p>  ```json</p>
+<p>  {</p>
+<p>    "object": "validate_customer_account",</p>
+<p>    "incoming_dependencies": [],</p>
+<p>    "outgoing_dependencies": [</p>
+<p>      "v_status",</p>
+<p>      "some_table",</p>
+<p>      "v_count",</p>
+<p>      "audit_log",</p>
+<p>      "table1",</p>
+<p>      "error_log",</p>
+<p>      "records",</p>
+<p>      "table2"</p>
+<p>    ]</p>
+<p>  }</p>
+<p>  ```</p>
+<p>- **Performance Considerations:**</p>
+<p>  - The procedure's performance may be impacted by the size of `some_table`, `table1`, and `table2`. Optimizing indexes on key columns (like IDs used in joins) could improve efficiency.</p>
+<p>  - Commit operations should be carefully managed to avoid unnecessary overhead, especially within exception handling blocks where rollbacks are frequent.</p>
+<h3>Additional Observations</h3>
+<p>- The procedure contains undefined variables such as `some_param` which may need clarification or correction based on the intended logic.</p>
+<p>- Usage of sequence (`audit_seq.NEXTVAL`) assumes its existence and proper configuration for generating unique transaction IDs.</p>
+<p>- It's crucial to ensure that user permissions align with database operations, especially updates and inserts into various tables.</p>
+                    </div>
+                    <div class="lineage">
+                        <h4>Lineage Analysis</h4>
+                        <p>{</p>
+<p>  "object": "validate_customer_account",</p>
+<p>  "incoming_dependencies": [],</p>
+<p>  "outgoing_dependencies": [</p>
+<p>    "v_status",</p>
+<p>    "some_table",</p>
+<p>    "v_count",</p>
+<p>    "audit_log",</p>
+<p>    "table1",</p>
+<p>    "error_log",</p>
+<p>    "records",</p>
+<p>    "table2"</p>
+<p>  ]</p>
+<p>}</p>
+                    </div>
+                </div>
+                
+
+                <div class="object-card">
+                    <h3>create_new_order</h3>
+                    <div class="metadata">
+                        <p><strong>Lines:</strong> 397 - 488</p>
+                        <p><strong>Dependencies:</strong> ["table1", "v_count", "v_status", "audit_log", "some_table", "error_log", "records", "table2"]</p>
+                    </div>
+                    <div class="summary">
+                        <h4>Summary</h4>
+                        <h3>PROCEDURE Overview</h3>
+<p>The `create_new_order` procedure in the `ORDER_MGMT` package is designed to facilitate the creation and management of new orders within an order management system. It validates input parameters, performs business logic operations such as updating order statuses and amounts, inserts audit records, and handles exceptions that may arise during execution.</p>
+<h3>Parameters</h3>
+<p>- **p_customer_id (IN NUMBER):** Represents the identifier for the customer placing the order.</p>
+<p>- **p_order_type (IN VARCHAR2):** Specifies the type of order being created or processed.</p>
+<p>- **p_total_amount (IN NUMBER):** The total monetary value associated with the order.</p>
+<h3>Business Logic</h3>
+<p>- **Main Operations:**</p>
+<p>  - Validates input parameters to ensure they are not null and that related records exist in the database.</p>
+<p>  - Retrieves the current status of an order from `table1` using a join operation with `table2`.</p>
+<p>  - Updates the amount for orders with a 'PENDING' status by applying a business rule (e.g., increasing by 10%).</p>
+<p>  - Inserts a new record into the `audit_log` to track changes made during this procedure.</p>
+<p>- **Validation Rules:**</p>
+<p>  - Checks if any parameter is null and raises an error if so.</p>
+<p>  - Verifies the existence of records in `some_table` using a count operation.</p>
+<p>- **Error Handling:**</p>
+<p>  - Uses exception blocks to handle specific scenarios such as `NO_DATA_FOUND` and general exceptions (`OTHERS`).</p>
+<p>  - Rolls back transactions and logs errors into the `error_log` table for any unhandled exceptions.</p>
+<h3>Technical Implementation</h3>
+<p>- **Database Operations:**</p>
+<p>  - Selects data from `some_table`, `table1`, and `table2`.</p>
+<p>  - Updates records in `table1`.</p>
+<p>  - Inserts records into both the `audit_log` and `error_log`.</p>
+<p>- **Dependencies:**</p>
+<p>  - **object:** `create_new_order`</p>
+<p>  - **incoming_dependencies:** []</p>
+<p>  - **outgoing_dependencies:**</p>
+<p>    - `v_status`: Used to determine the status of an order.</p>
+<p>    - `some_table`, `table1`, `table2`: Tables accessed for querying and updating data.</p>
+<p>    - `v_count`: Utilized in validation logic.</p>
+<p>    - `audit_log`: Table where audit records are inserted.</p>
+<p>    - `error_log`: Table where error details are recorded.</p>
+<p>- **Performance Considerations:**</p>
+<p>  - The procedure includes several database operations that can impact performance, such as SELECTs and UPDATEs across potentially large tables. Indexing the columns used in WHERE clauses could improve efficiency.</p>
+<p>  - COMMIT is called after inserting audit records; careful consideration of when to commit transactions may help manage database load and ensure data consistency.</p>
+<p>This analysis highlights key aspects of the `create_new_order` procedure, focusing on its purpose, logic flow, dependencies, and performance considerations.</p>
+                    </div>
+                    <div class="lineage">
+                        <h4>Lineage Analysis</h4>
+                        <p>{</p>
+<p>  "object": "create_new_order",</p>
+<p>  "incoming_dependencies": [],</p>
+<p>  "outgoing_dependencies": [</p>
+<p>    "v_status",</p>
+<p>    "some_table",</p>
+<p>    "v_count",</p>
+<p>    "table1",</p>
+<p>    "error_log",</p>
+<p>    "audit_log",</p>
+<p>    "records",</p>
+<p>    "table2"</p>
+<p>  ]</p>
+<p>}</p>
+                    </div>
+                </div>
+                
+
+                <div class="object-card">
+                    <h3>update_order_status</h3>
+                    <div class="metadata">
+                        <p><strong>Lines:</strong> 488 - 577</p>
+                        <p><strong>Dependencies:</strong> ["table1", "v_count", "v_status", "audit_log", "some_table", "error_log", "records", "table2"]</p>
+                    </div>
+                    <div class="summary">
+                        <h4>Summary</h4>
+                        <h3>PROCEDURE Overview</h3>
+<p>The `update_order_status` procedure in the `ORDER_MGMT` package is designed to update the status of an order within the system. It involves input validation, checking current status conditions, updating relevant records, and logging actions for auditing purposes.</p>
+<h3>Parameters</h3>
+<p>- **p_order_id** (`NUMBER`): The unique identifier for the order that needs its status updated.</p>
+<p>- **p_new_status** (`VARCHAR2`): The new status value to set for the specified order.</p>
+<p>- **p_update_reason** (`VARCHAR2`): A description or reason for updating the order's status.</p>
+<h3>Business Logic</h3>
+<p>- **Main Operations:**</p>
+<p>  - Validate input parameters to ensure they are not null and refer to existing records.</p>
+<p>  - Retrieve current order status and category from joined tables `table1` and `table2`.</p>
+<p>  - If the current status is 'PENDING', update financial calculations and modify relevant record fields in `table1`.</p>
+<p>  - Log this action into an `audit_log`.</p>
+<p>- **Validation Rules:**</p>
+<p>  - Ensure no parameters are null; if they are, raise a specific error.</p>
+<p>  - Confirm that records exist for the given order ID.</p>
+<p>  - Verify current status is 'ACTIVE' to proceed with updates.</p>
+<p>- **Error Handling:**</p>
+<p>  - Handles exceptions like `NO_DATA_FOUND` by rolling back transactions and raising application-specific errors with messages.</p>
+<p>  - General exception handling logs any other unexpected errors into an `error_log`, rolls back the transaction, and rethrows the error for further handling.</p>
+<h3>Technical Implementation</h3>
+<p>- **Database Operations:**</p>
+<p>  - Executes a SELECT operation to check record existence and retrieve current status from joined tables.</p>
+<p>  - Performs an UPDATE on `table1` if business conditions are satisfied (e.g., when status is 'PENDING').</p>
+<p>  - Inserts records into `audit_log` and optionally `error_log` based on success or failure of operations.</p>
+<p>- **Dependencies:**</p>
+<p>  - "object": "update_order_status"</p>
+<p>    - Incoming Dependencies: []</p>
+<p>    - Outgoing Dependencies:</p>
+<p>      - `v_count`: Used for validating the existence of a record.</p>
+<p>      - `table1`, `some_table`: Tables queried and updated during business logic execution.</p>
+<p>      - `error_log`, `audit_log`: Tables where logs are inserted as part of error handling and auditing.</p>
+<p>      - `records`: Generic placeholder for data being processed or referenced.</p>
+<p>      - `table2`: Table joined with `table1` to retrieve current status details.</p>
+<p>      - `v_status`: Used in the business logic decision-making process.</p>
+<p>- **Performance Considerations:**</p>
+<p>  - The procedure's performance can be influenced by the efficiency of JOIN operations between `table1` and `table2`.</p>
+<p>  - The SELECT query used for existence checks should have an index on the relevant ID column to ensure quick lookup.</p>
+<p>  - Transaction handling, including COMMIT/ROLLBACK actions, is crucial for maintaining data consistency but might add overhead in high-load environments.</p>
+<p>This detailed analysis of the `update_order_status` procedure highlights its design choices and operational logic within the context of managing order statuses.</p>
+                    </div>
+                    <div class="lineage">
+                        <h4>Lineage Analysis</h4>
+                        <p>{</p>
+<p>  "object": "update_order_status",</p>
+<p>  "incoming_dependencies": [],</p>
+<p>  "outgoing_dependencies": [</p>
+<p>    "v_count",</p>
+<p>    "table1",</p>
+<p>    "error_log",</p>
+<p>    "some_table",</p>
+<p>    "audit_log",</p>
+<p>    "records",</p>
+<p>    "table2",</p>
+<p>    "v_status"</p>
+<p>  ]</p>
+<p>}</p>
+                    </div>
+                </div>
+                
+
+                <div class="object-card">
+                    <h3>process_inventory_adjustment</h3>
+                    <div class="metadata">
+                        <p><strong>Lines:</strong> 632 - 723</p>
+                        <p><strong>Dependencies:</strong> ["table1", "v_count", "v_status", "audit_log", "some_table", "error_log", "records", "table2"]</p>
+                    </div>
+                    <div class="summary">
+                        <h4>Summary</h4>
+                        <p>Here is the detailed analysis of the `process_inventory_adjustment` stored procedure from the `INVENTORY_MGMT` package, based on the provided code:</p>
+<h3>PROCEDURE Overview</h3>
+<p>The `process_inventory_adjustment` procedure is designed to manage adjustments in inventory levels for a given product. It validates input parameters, checks existing data, applies business logic to update records if applicable, and logs changes or errors into an audit log and error log respectively.</p>
+<h3>Parameters</h3>
+<p>- **p_product_id (IN NUMBER):** This parameter represents the ID of the product whose inventory is being adjusted.</p>
+<p>- **p_quantity_change (IN NUMBER):** The amount by which the inventory needs to be adjusted. It could be positive (addition) or negative (reduction).</p>
+<p>- **p_reason_code (IN VARCHAR2):** A code representing the reason for the adjustment, potentially used for categorization or audit purposes.</p>
+<h3>Business Logic</h3>
+<p>- **Main Operations:**</p>
+<p>  - Validates input parameters to ensure they are not null and checks if the record exists.</p>
+<p>  - Retrieves current status from `table1` and category from `table2`.</p>
+<p>  - Applies business rules based on product status (e.g., 'PENDING') which involve recalculating amounts and updating records in `table1`.</p>
+<p>  - Inserts an audit log entry to record the transaction details.</p>
+<p>- **Validation Rules:**</p>
+<p>  - Ensures that all input parameters (`some_param`) are not null.</p>
+<p>  - Verifies that a corresponding record exists in `some_table` using provided identifiers.</p>
+<p>- **Error Handling:**</p>
+<p>  - Uses exception handling for specific errors like `NO_DATA_FOUND`, rolling back transactions and raising application-specific errors with detailed messages.</p>
+<p>  - Catches all other exceptions (`OTHERS`), logs error details into the `error_log`, rolls back any pending transaction, and rethrows the error.</p>
+<h3>Technical Implementation</h3>
+<p>- **Database Operations:**</p>
+<p>  - Queries from tables like `some_table`, `table1`, and `table2`.</p>
+<p>  - Updates records in `table1`.</p>
+<p>  - Inserts audit log entries into `audit_log` and error details into `error_log`.</p>
+<p>- **Dependencies:**</p>
+<p>  ```json</p>
+<p>  {</p>
+<p>    "object": "process_inventory_adjustment",</p>
+<p>    "incoming_dependencies": [],</p>
+<p>    "outgoing_dependencies": [</p>
+<p>      "v_status",</p>
+<p>      "v_count",</p>
+<p>      "table1",</p>
+<p>      "error_log",</p>
+<p>      "some_table",</p>
+<p>      "audit_log",</p>
+<p>      "records",</p>
+<p>      "table2"</p>
+<p>    ]</p>
+<p>  }</p>
+<p>  ```</p>
+<p>- **Performance Considerations:**</p>
+<p>  - The procedure contains a SELECT statement to check data existence and retrieve status, which could be optimized based on indexing strategies.</p>
+<p>  - The `UPDATE` operation is conditional and might lead to partial execution paths, affecting performance depending on the size of `table1`.</p>
+<p>  - Proper transaction management through COMMITs after successful operations ensures consistency but should be used judiciously to avoid unnecessary locks.</p>
+<p>Overall, this procedure encapsulates validation, business logic application, and robust error handling for managing inventory adjustments, with dependencies primarily focused around status verification and logging functionalities.</p>
+                    </div>
+                    <div class="lineage">
+                        <h4>Lineage Analysis</h4>
+                        <p>{</p>
+<p>  "object": "process_inventory_adjustment",</p>
+<p>  "incoming_dependencies": [],</p>
+<p>  "outgoing_dependencies": [</p>
+<p>    "v_status",</p>
+<p>    "v_count",</p>
+<p>    "table1",</p>
+<p>    "error_log",</p>
+<p>    "some_table",</p>
+<p>    "audit_log",</p>
+<p>    "records",</p>
+<p>    "table2"</p>
+<p>  ]</p>
+<p>}</p>
+                    </div>
+                </div>
+                
+
+                <div class="object-card">
+                    <h3>generate_inventory_report</h3>
+                    <div class="metadata">
+                        <p><strong>Lines:</strong> 723 - 812</p>
+                        <p><strong>Dependencies:</strong> ["table1", "v_count", "v_status", "audit_log", "some_table", "error_log", "records", "table2"]</p>
+                    </div>
+                    <div class="summary">
+                        <h4>Summary</h4>
+                        <h3>PROCEDURE Overview</h3>
+<p>The `generate_inventory_report` procedure in the `INVENTORY_MGMT` package is designed to generate an inventory report for a specified warehouse, based on certain business rules and conditions. It performs validation checks on inputs, updates records if necessary, and logs both successful operations and errors.</p>
+<h3>Parameters</h3>
+<p>- **p_warehouse_id (IN NUMBER)**: The identifier for the specific warehouse whose inventory data needs to be reported.</p>
+<p>- **p_report_type (IN VARCHAR2)**: A string indicating the type of report being generated. It may influence which records are selected or how they are processed, although this parameter is not explicitly used in the provided code snippet.</p>
+<h3>Business Logic</h3>
+<p>- Main Operations:</p>
+<p>  - Validates input parameters for null values and ensures data existence.</p>
+<p>  - Retrieves current status and category from `table1` and `table2`.</p>
+<p>  - Applies business rules to determine if updates should be made (e.g., when a record's status is 'PENDING').</p>
+<p>  - Updates inventory amounts and logs the update in an audit trail.</p>
+<p>- Validation Rules:</p>
+<p>  - Ensures that input parameters are not null.</p>
+<p>  - Checks for the existence of records in `some_table`.</p>
+<p>  - Confirms the current status from `table1` is 'ACTIVE' before proceeding with updates.</p>
+<p>- Error Handling:</p>
+<p>  - Uses `RAISE_APPLICATION_ERROR` to handle specific validation failures and missing data.</p>
+<p>  - Catches exceptions using a generic handler (`OTHERS`) for unexpected errors, logs them in an error log table, rolls back transactions if needed, and re-raises the error.</p>
+<h3>Technical Implementation</h3>
+<p>- Database Operations:</p>
+<p>  - Retrieves counts and status from database tables using `SELECT` statements.</p>
+<p>  - Performs updates on records in `table1`.</p>
+<p>  - Inserts audit and error entries into `audit_log` and `error_log` respectively.</p>
+<p>- Dependencies:</p>
+<p>  ```json</p>
+<p>  {</p>
+<p>    "object": "generate_inventory_report",</p>
+<p>    "incoming_dependencies": [],</p>
+<p>    "outgoing_dependencies": [</p>
+<p>      "v_status",</p>
+<p>      "some_table",</p>
+<p>      "v_count",</p>
+<p>      "audit_log",</p>
+<p>      "table1",</p>
+<p>      "error_log",</p>
+<p>      "records",</p>
+<p>      "table2"</p>
+<p>    ]</p>
+<p>  }</p>
+<p>  ```</p>
+<p>- Performance Considerations:</p>
+<p>  - The procedure involves several database operations, including `SELECT`, `UPDATE`, and `INSERT` statements. Ensuring that these queries are optimized with appropriate indexing can improve performance.</p>
+<p>  - It uses a sequence (`audit_seq.NEXTVAL`) for generating unique transaction IDs in the audit log, which is efficient but should be monitored for performance in high-load scenarios.</p>
+<p>  - Error logging involves an additional database write operation; it's crucial to ensure that this does not become a bottleneck.</p>
+<p>Overall, the procedure effectively combines data validation, business logic application, and error handling while interacting with multiple database objects. Optimizing its performance would involve indexing strategies, considering query execution plans, and potentially restructuring queries for efficiency in high-transaction environments.</p>
+                    </div>
+                    <div class="lineage">
+                        <h4>Lineage Analysis</h4>
+                        <p>{</p>
+<p>  "object": "generate_inventory_report",</p>
+<p>  "incoming_dependencies": [],</p>
+<p>  "outgoing_dependencies": [</p>
+<p>    "v_status",</p>
+<p>    "some_table",</p>
+<p>    "v_count",</p>
+<p>    "audit_log",</p>
+<p>    "table1",</p>
+<p>    "error_log",</p>
+<p>    "records",</p>
+<p>    "table2"</p>
+<p>  ]</p>
+<p>}</p>
+                    </div>
+                </div>
+                
+
+                <div class="object-card">
+                    <h3>process_inventory_adjustment</h3>
+                    <div class="metadata">
+                        <p><strong>Lines:</strong> 867 - 958</p>
+                        <p><strong>Dependencies:</strong> ["table1", "v_count", "v_status", "audit_log", "some_table", "error_log", "records", "table2"]</p>
+                    </div>
+                    <div class="summary">
+                        <h4>Summary</h4>
+                        <p>Certainly! Below is the detailed analysis of the `process_inventory_adjustment` procedure from the `PAYMENT_MGMT` package.</p>
+<h3>PROCEDURE Overview</h3>
+<p>The `process_inventory_adjustment` procedure is designed to manage inventory adjustments for products within a system. It takes in product ID, quantity change, and a reason code as input parameters, validates these inputs, performs certain business logic operations (like status checks and updates), logs audit information, and handles errors that may occur during execution.</p>
+<h3>Parameters</h3>
+<p>- **p_product_id**: A `NUMBER` representing the unique identifier of the product to be adjusted. This is the primary key used in various queries.</p>
+<p>- **p_quantity_change**: A `NUMBER` indicating how much the quantity should change (either an increase or decrease).</p>
+<p>- **p_reason_code**: A `VARCHAR2` providing a reason code for the inventory adjustment, likely used for tracking and reporting purposes.</p>
+<h3>Business Logic</h3>
+<p>- **Main Operations**:</p>
+<p>  - Validates input parameters to ensure they are not null.</p>
+<p>  - Checks if data related to the product exists in `some_table`.</p>
+<p>  - Retrieves the current status of the product from `table1` and its category from `table2`.</p>
+<p>  - Applies a business rule where if the status is 'PENDING', calculates a new amount by applying an increase (10% in this case).</p>
+<p>  - Updates the amount, last updated timestamp, and updater's user ID for records in `table1`.</p>
+<p>- **Validation Rules**:</p>
+<p>  - Parameters must not be null.</p>
+<p>  - The product record must exist in the database (`some_table`).</p>
+<p>- **Error Handling**:</p>
+<p>  - Uses exception handling to manage errors such as `NO_DATA_FOUND` (when no record is found) and other exceptions captured by the `WHEN OTHERS` block.</p>
+<p>  - In case of an error, it rolls back any changes made during the transaction before logging the error into `error_log`.</p>
+<h3>Technical Implementation</h3>
+<p>- **Database Operations**:</p>
+<p>  - Reads from `some_table`, `table1`, and `table2` to validate data existence and retrieve status and category information.</p>
+<p>  - Updates records in `table1`.</p>
+<p>  - Inserts audit logs into `audit_log`.</p>
+<p>  - Logs errors to `error_log`.</p>
+<p>- **Dependencies**:</p>
+<p>  ```json</p>
+<p>  {</p>
+<p>    "object": "process_inventory_adjustment",</p>
+<p>    "incoming_dependencies": [],</p>
+<p>    "outgoing_dependencies": [</p>
+<p>      "v_status",</p>
+<p>      "v_count",</p>
+<p>      "table1",</p>
+<p>      "error_log",</p>
+<p>      "some_table",</p>
+<p>      "audit_log",</p>
+<p>      "records",</p>
+<p>      "table2"</p>
+<p>    ]</p>
+<p>  }</p>
+<p>  ```</p>
+<p>- **Performance Considerations**:</p>
+<p>  - The procedure involves multiple SQL operations (SELECT, UPDATE, INSERT) which could impact performance if executed frequently or on large datasets.</p>
+<p>  - Indexes on `id` fields in relevant tables (`some_table`, `table1`, `table2`) are crucial for ensuring efficient data retrieval and updates.</p>
+<p>  - Consideration should be given to the transaction size, especially with the audit log insertion, which could grow rapidly depending on usage.</p>
+<p>This analysis highlights key aspects of the procedure's implementation, from its business logic to technical nuances, providing insights into how it functions within its package.</p>
+                    </div>
+                    <div class="lineage">
+                        <h4>Lineage Analysis</h4>
+                        <p>{</p>
+<p>  "object": "process_inventory_adjustment",</p>
+<p>  "incoming_dependencies": [],</p>
+<p>  "outgoing_dependencies": [</p>
+<p>    "v_status",</p>
+<p>    "v_count",</p>
+<p>    "table1",</p>
+<p>    "error_log",</p>
+<p>    "some_table",</p>
+<p>    "audit_log",</p>
+<p>    "records",</p>
+<p>    "table2"</p>
+<p>  ]</p>
+<p>}</p>
+                    </div>
+                </div>
+                
+
+                <div class="object-card">
+                    <h3>generate_inventory_report</h3>
+                    <div class="metadata">
+                        <p><strong>Lines:</strong> 958 - 1047</p>
+                        <p><strong>Dependencies:</strong> ["table1", "v_count", "v_status", "audit_log", "some_table", "error_log", "records", "table2"]</p>
+                    </div>
+                    <div class="summary">
+                        <h4>Summary</h4>
+                        <h3>PROCEDURE Overview</h3>
+<p>The `generate_inventory_report` procedure in the `PAYMENT_MGMT` package is designed to handle inventory data processing for a specified warehouse and report type. It involves validating input parameters, executing business logic based on current statuses of records, updating necessary fields, and ensuring proper logging for both successful operations and exceptions.</p>
+<h3>Parameters</h3>
+<p>- **p_warehouse_id IN NUMBER**: An identifier for the warehouse whose inventory is being processed.</p>
+<p>- **p_report_type IN VARCHAR2**: A descriptor indicating the type of report to generate.</p>
+<h3>Business Logic</h3>
+<p>- **Main Operations:**</p>
+<p>  - The procedure validates input parameters, ensuring they are not null and that relevant records exist in the database.</p>
+<p>  - It checks the status of a record from `table1` and `table2`, executing specific business logic if the status is 'PENDING'.</p>
+<p>  - If conditions meet, it calculates a new amount by increasing the current amount by 10% and updates this value along with other relevant fields in `table1`.</p>
+<p>  - Successfully executed operations are recorded in an audit log.</p>
+<p>- **Validation Rules:**</p>
+<p>  - Null checks on input parameters.</p>
+<p>  - Ensures that records exist for given IDs within specified tables before proceeding further into business logic.</p>
+<p>- **Error Handling:**</p>
+<p>  - Uses RAISE_APPLICATION_ERROR to handle custom errors when validations fail (e.g., null inputs, missing records).</p>
+<p>  - Catches `NO_DATA_FOUND` exceptions to rollback transactions and log appropriate error messages.</p>
+<p>  - Handles other exceptions by rolling back operations, logging detailed errors in an `error_log`, and re-raising the exception.</p>
+<h3>Technical Implementation</h3>
+<p>- **Database Operations:**</p>
+<p>  - The procedure interacts with several tables (`some_table`, `table1`, `table2`, `audit_log`, and `error_log`) for validation, data retrieval, update operations, and logging.</p>
+<p>- **Dependencies:**</p>
+<p>  ```json</p>
+<p>  {</p>
+<p>    "object": "generate_inventory_report",</p>
+<p>    "incoming_dependencies": [],</p>
+<p>    "outgoing_dependencies": [</p>
+<p>      "v_status",</p>
+<p>      "some_table",</p>
+<p>      "v_count",</p>
+<p>      "audit_log",</p>
+<p>      "table1",</p>
+<p>      "error_log",</p>
+<p>      "records",</p>
+<p>      "table2"</p>
+<p>    ]</p>
+<p>  }</p>
+<p>  ```</p>
+<p>- **Performance Considerations:**</p>
+<p>  - The procedure includes a SELECT operation with COUNT to validate record existence, which is efficient but should be optimized for large datasets.</p>
+<p>  - An UPDATE operation followed by an INSERT into the `audit_log` table; these are committed as separate transactions, which may impact performance if done frequently or on large tables.</p>
+<p>  - Proper indexing on columns such as `id`, `status`, and any other frequent query filters could improve performance significantly.</p>
+<p>The procedure demonstrates a robust approach to handling inventory report generation with comprehensive error management and logging practices. However, optimizing database interactions for performance and ensuring all dependencies are clearly defined would enhance its efficiency in large-scale environments.</p>
+                    </div>
+                    <div class="lineage">
+                        <h4>Lineage Analysis</h4>
+                        <p>{</p>
+<p>  "object": "generate_inventory_report",</p>
+<p>  "incoming_dependencies": [],</p>
+<p>  "outgoing_dependencies": [</p>
+<p>    "v_status",</p>
+<p>    "some_table",</p>
+<p>    "v_count",</p>
+<p>    "audit_log",</p>
+<p>    "table1",</p>
+<p>    "error_log",</p>
+<p>    "records",</p>
+<p>    "table2"</p>
+<p>  ]</p>
+<p>}</p>
+                    </div>
+                </div>
+                
+
+                <div class="object-card">
+                    <h3>process_inventory_adjustment</h3>
+                    <div class="metadata">
+                        <p><strong>Lines:</strong> 1102 - 1193</p>
+                        <p><strong>Dependencies:</strong> ["table1", "v_count", "v_status", "audit_log", "some_table", "error_log", "records", "table2"]</p>
+                    </div>
+                    <div class="summary">
+                        <h4>Summary</h4>
+                        <h3>PROCEDURE Overview</h3>
+<p>The `process_inventory_adjustment` procedure is designed to adjust inventory records based on input parameters such as product ID, quantity change, and reason code. It validates inputs, checks existing data, performs business logic operations like updating records and logging audit trails, and handles exceptions.</p>
+<h3>Parameters</h3>
+<p>- **p_product_id (IN NUMBER):** The unique identifier for the product whose inventory is being adjusted.</p>
+<p>- **p_quantity_change (IN NUMBER):** The amount by which the inventory quantity should be changed.</p>
+<p>- **p_reason_code (IN VARCHAR2):** A code representing the reason for the inventory adjustment.</p>
+<h3>Business Logic</h3>
+<p>- **Main Operations:**</p>
+<p>  - Validates input parameters to ensure they are not null and that a corresponding record exists in `some_table`.</p>
+<p>  - Retrieves the current status of the product from joined tables (`table1` and `table2`) and checks if it is 'ACTIVE'.</p>
+<p>  - If the status is 'PENDING', calculates new values and updates the records in `table1`.</p>
+<p>  - Inserts an audit log entry to record the transaction details.</p>
+<p>- **Validation Rules:**</p>
+<p>  - Parameters must not be null.</p>
+<p>  - The product ID must correspond to an existing record in `some_table`.</p>
+<p>- **Error Handling:**</p>
+<p>  - Uses `RAISE_APPLICATION_ERROR` for input validation errors and missing records.</p>
+<p>  - Handles exceptions with a rollback mechanism, logs detailed error information into `error_log`, and rethrows the exception.</p>
+<h3>Technical Implementation</h3>
+<p>- **Database Operations:**</p>
+<p>  - Selects from `some_table` to validate existence of data.</p>
+<p>  - Joins `table1` and `table2` to retrieve current status and category.</p>
+<p>  - Updates `table1` with new values if conditions are met.</p>
+<p>  - Inserts an entry into `audit_log` for successful updates.</p>
+<p>  - Logs errors in `error_log` during exception handling.</p>
+<p>- **Dependencies:**</p>
+<p>  ```json</p>
+<p>  {</p>
+<p>    "object": "process_inventory_adjustment",</p>
+<p>    "incoming_dependencies": [],</p>
+<p>    "outgoing_dependencies": [</p>
+<p>      "v_status",</p>
+<p>      "v_count",</p>
+<p>      "table1",</p>
+<p>      "error_log",</p>
+<p>      "some_table",</p>
+<p>      "audit_log",</p>
+<p>      "records",</p>
+<p>      "table2"</p>
+<p>    ]</p>
+<p>  }</p>
+<p>  ```</p>
+<p>- **Performance Considerations:**</p>
+<p>  - The procedure uses a sequence (`audit_seq.NEXTVAL`) for generating unique transaction IDs, which should be optimized for performance.</p>
+<p>  - Indexes on columns used in WHERE clauses (like `id` and `status`) can improve query performance.</p>
+<p>  - Commit operations are strategically placed to ensure data consistency while minimizing unnecessary commits. However, frequent commits could impact performance if the procedure is called often.</p>
+<p>Overall, this procedure effectively manages inventory adjustments with robust validation, error handling, and logging mechanisms in place.</p>
+                    </div>
+                    <div class="lineage">
+                        <h4>Lineage Analysis</h4>
+                        <p>{</p>
+<p>  "object": "process_inventory_adjustment",</p>
+<p>  "incoming_dependencies": [],</p>
+<p>  "outgoing_dependencies": [</p>
+<p>    "v_status",</p>
+<p>    "v_count",</p>
+<p>    "table1",</p>
+<p>    "error_log",</p>
+<p>    "some_table",</p>
+<p>    "audit_log",</p>
+<p>    "records",</p>
+<p>    "table2"</p>
+<p>  ]</p>
+<p>}</p>
+                    </div>
+                </div>
+                
+
+                <div class="object-card">
+                    <h3>generate_inventory_report</h3>
+                    <div class="metadata">
+                        <p><strong>Lines:</strong> 1193 - 1282</p>
+                        <p><strong>Dependencies:</strong> ["table1", "v_count", "v_status", "audit_log", "some_table", "error_log", "records", "table2"]</p>
+                    </div>
+                    <div class="summary">
+                        <h4>Summary</h4>
+                        <h3>PROCEDURE Overview</h3>
+<p>The `generate_inventory_report` procedure in the `REPORTING_MGMT` package is designed to generate reports related to inventory based on given warehouse and report type parameters. It performs various data validations, business logic applications, updates records, and logs audit trails for any changes made.</p>
+<h3>Parameters</h3>
+<p>- **p_warehouse_id (IN NUMBER)**: Identifier of the warehouse for which the inventory report needs to be generated.</p>
+<p>- **p_report_type (IN VARCHAR2)**: The type of report required. This could specify different formats or types of data aggregation, though its use is not detailed in the procedure's code.</p>
+<h3>Business Logic</h3>
+<p>- **Main Operations**:</p>
+<p>  - Validates input parameters for null values and checks if related records exist.</p>
+<p>  - Retrieves current status and category from joined tables `table1` and `table2`.</p>
+<p>  - Applies business rules to update inventory amounts when the status is 'PENDING'.</p>
+<p>  - Inserts an audit record after updating the inventory.</p>
+<p>- **Validation Rules**:</p>
+<p>  - The procedure checks for null values in parameters using a placeholder variable, `some_param`, which should be defined as either `p_warehouse_id` or another parameter.</p>
+<p>  - Ensures that there exists at least one relevant record in `some_table`.</p>
+<p>  - Verifies the status of records to determine if an update is necessary.</p>
+<p>- **Error Handling**:</p>
+<p>  - Uses `RAISE_APPLICATION_ERROR` for input validation and data existence errors with specific error codes (-20001, -20002).</p>
+<p>  - Handles exceptions such as `NO_DATA_FOUND` by rolling back transactions and raising custom error messages.</p>
+<p>  - Catches any other exceptions using the `OTHERS` handler, rolls back transactions, logs error details in an `error_log` table, commits the log entry, and re-raises the exception.</p>
+<h3>Technical Implementation</h3>
+<p>- **Database Operations**:</p>
+<p>  - Selects data from `some_table`, `table1`, and `table2` for validation and business logic purposes.</p>
+<p>  - Updates `table1` with new inventory amounts if conditions are met.</p>
+<p>  - Inserts records into `audit_log` upon successful updates.</p>
+<p>- **Dependencies**:</p>
+<p>  ```json</p>
+<p>  {</p>
+<p>    "object": "generate_inventory_report",</p>
+<p>    "incoming_dependencies": [],</p>
+<p>    "outgoing_dependencies": [</p>
+<p>      "v_status",</p>
+<p>      "some_table",</p>
+<p>      "v_count",</p>
+<p>      "audit_log",</p>
+<p>      "table1",</p>
+<p>      "error_log",</p>
+<p>      "records",</p>
+<p>      "table2"</p>
+<p>    ]</p>
+<p>  }</p>
+<p>  ```</p>
+<p>- **Performance Considerations**:</p>
+<p>  - The procedure involves multiple database operations, including SELECTs and an UPDATE, which could impact performance if the tables involved are large.</p>
+<p>  - Utilizes a sequence (`audit_seq.NEXTVAL`) for generating unique transaction IDs, potentially affecting performance under high concurrency.</p>
+<p>  - Explicit commits are used after each critical operation (update and log insert), which can improve data integrity but may increase overhead due to frequent commit operations. Consider batch processing or reducing the number of commits if performance becomes an issue.</p>
+<p>In summary, `generate_inventory_report` is a comprehensive procedure that validates inputs, enforces business rules, updates records conditionally, and maintains audit logs for transparency in inventory management. Performance optimizations might be necessary depending on database size and transaction volume.</p>
+                    </div>
+                    <div class="lineage">
+                        <h4>Lineage Analysis</h4>
+                        <p>{</p>
+<p>  "object": "generate_inventory_report",</p>
+<p>  "incoming_dependencies": [],</p>
+<p>  "outgoing_dependencies": [</p>
+<p>    "v_status",</p>
+<p>    "some_table",</p>
+<p>    "v_count",</p>
+<p>    "audit_log",</p>
+<p>    "table1",</p>
+<p>    "error_log",</p>
+<p>    "records",</p>
+<p>    "table2"</p>
+<p>  ]</p>
+<p>}</p>
+                    </div>
+                </div>
+                
+</div>
+
+        <div class="section" style="text-align: center; color: #666;">
+            <p>Generated on: 2025-02-14 13:49:33</p>
+        </div>
+        </body>
+        </html>
+        
